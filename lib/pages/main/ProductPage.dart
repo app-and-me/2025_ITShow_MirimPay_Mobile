@@ -13,11 +13,103 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   int _selectedCategoryIndex = 0;
-  final List<String> _categories = ['과자', '음료수', '빵', '우유', '냉동식품', '아이스크림'];
+  final List<String> _categories = ['전체', '과자', '음료수', '빵', '우유', '냉동식품', '아이스크림'];
+  final ScrollController _scrollController = ScrollController();
+  bool _showDivider = false;
+
+  final List<Map<String, dynamic>> _allProducts = [
+    {
+      'name': '티즐 오렌지맛',
+      'price': '2,700원',
+      'stock': 7,
+      'category': '과자',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '코카콜라 250ml',
+      'price': '1,500원',
+      'stock': 15,
+      'category': '음료수',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '초코소라빵',
+      'price': '1,800원',
+      'stock': 20,
+      'category': '빵',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '딸기우유 200ml',
+      'price': '1,400원',
+      'stock': 12,
+      'category': '우유',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '냉동 떡볶이',
+      'price': '4,500원',
+      'stock': 0,
+      'category': '냉동식품',
+      'isOutOfStock': true,
+    },
+    {
+      'name': '메로나',
+      'price': '1,200원',
+      'stock': 9,
+      'category': '아이스크림',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '과자 세트',
+      'price': '5,000원',
+      'stock': 3,
+      'category': '과자',
+      'isOutOfStock': false,
+    },
+    {
+      'name': '바닐라 아이스크림',
+      'price': '2,000원',
+      'stock': 5,
+      'category': '아이스크림',
+      'isOutOfStock': false,
+    }
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    final shouldShowDivider = _scrollController.offset > 50;
+    if (shouldShowDivider != _showDivider) {
+      setState(() {
+        _showDivider = shouldShowDivider;
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> _getFilteredProducts() {
+    final String selectedCategory = _categories[_selectedCategoryIndex];
+    if (_selectedCategoryIndex == 0) { 
+      return _allProducts;
+    }
+    return _allProducts.where((p) => p['category'] == selectedCategory).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     final gray = Gray.of(context);
+    final filteredProducts = _getFilteredProducts();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -42,6 +134,7 @@ class _ProductPageState extends State<ProductPage> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 24),
           Container(
             height: 35,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -62,33 +155,51 @@ class _ProductPageState extends State<ProductPage> {
               },
             ),
           ),
-          
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.only(
-                left: 16, 
-                right: 16, 
-                top: 16, 
-                bottom: 130,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 0),
+            height: 16,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: _showDivider ? gray.gray200 : Colors.transparent,
+                  width: 1,
+                ),
               ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                bool isOutOfStock = index == 4;
-                
-                return ProductCard(
-                  name: '티즐 오렌지맛',
-                  price: '2,700원',
-                  stock: '재고 : 7개',
-                  isOutOfStock: isOutOfStock,
-                );
-              },
             ),
+          ),
+          Expanded(
+            child: filteredProducts.isEmpty 
+              ? Center(
+                  child: Text(
+                    '${_categories[_selectedCategoryIndex]} 상품이 없습니다',
+                    style: Typo.bodyMd(context, color: gray.gray600),
+                  ),
+                )
+              : GridView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(
+                    left: 16, 
+                    right: 16, 
+                    top: 16, 
+                    bottom: 130,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: filteredProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = filteredProducts[index];
+                    return ProductCard(
+                      name: product['name'],
+                      price: product['price'],
+                      stock: product['stock'] > 0 ? '재고 : ${product['stock']}개' : null,
+                      isOutOfStock: product['isOutOfStock'],
+                    );
+                  },
+                ),
           ),
         ],
       ),
@@ -120,14 +231,14 @@ class CategoryBadge extends StatelessWidget {
           color: isSelected ? gray.gray50 : gray.gray50,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? gray.gray300 : gray.gray300,
+            color: isSelected ? gray.gray900 : gray.gray300,
           ),
         ),
         child: Text(
           text,
           style: Typo.caption(
             context,
-            color: gray.gray800,
+            color: isSelected ? gray.gray900 : gray.gray800,
           ),
         ),
       ),
