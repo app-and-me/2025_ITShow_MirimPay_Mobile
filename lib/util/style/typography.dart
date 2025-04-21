@@ -36,18 +36,7 @@ class Typo {
     );
   }
   
-  static TextStyle headlineSm(BuildContext context, {Color? color}) {
-    return TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      height: 1.20,
-      letterSpacing: -0.72,
-      color: color ?? Theme.of(context).textTheme.bodyLarge?.color,
-    );
-  }
-
-  static TextStyle subheading(BuildContext context, {Color? color}) {
+  static TextStyle headlineSub(BuildContext context, {Color? color}) {
     return TextStyle(
       fontFamily: fontFamily,
       fontSize: 18,
