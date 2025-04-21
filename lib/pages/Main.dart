@@ -25,6 +25,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {    
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        toolbarHeight: 18,
+        scrolledUnderElevation: 0,
+      ),
       backgroundColor: Colors.white,
       extendBody: true,
       body: pages[_currentIndex],
