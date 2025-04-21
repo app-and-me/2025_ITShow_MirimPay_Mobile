@@ -65,7 +65,7 @@ class _MePageState extends State<MePage> {
             color: gray.gray100,
           ),
           const SizedBox(height: 16),
-          // TODO: 세부 정보 페이지로 이동
+          // TODO: 탭 안으로 이동 기능
           MenuListItem(
             title: '결제 내역',
             onTap: () {},
