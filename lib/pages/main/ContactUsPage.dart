@@ -89,7 +89,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
   Map<String, List<Map<String, dynamic>>> _groupQuestionsByDate(List<Map<String, dynamic>> questions) {
-    final today = DateTime(2025, 4, 21);
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     final weekAgo = today.subtract(const Duration(days: 7));
     final monthAgo = today.subtract(const Duration(days: 30));
 
@@ -262,30 +262,46 @@ class _ContactUsPageState extends State<ContactUsPage> {
             ),
           ),
           Expanded(
-            child: questionItems.isEmpty
-                ? Center(
-                    child: Text(
-                      '${_categories[_selectedCategoryIndex]} 관련 문의가 없습니다',
-                      style: Typo.bodyMd(context, color: colors.gray600),
-                    ),
-                  )
-                : ListView(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 150,
-                      top: 16,
-                    ),
-                    children: [
-                      DateFilterHeader(
-                        title: _selectedDateFilter,
-                        onTap: _showDateFilterBottomSheet,
+            child: ListView(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 150,
+                top: 16,
+              ),
+              children: [
+                DateFilterHeader(
+                  title: _selectedDateFilter,
+                  onTap: _showDateFilterBottomSheet,
+                ),
+                const SizedBox(height: 16),
+                if (questionItems.isEmpty) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: colors.gray100,
+                          width: 1,
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      ...questionItems,
-                    ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '문의 내역이 없습니다',
+                          style: Typo.bodyMd(context, color: colors.gray800),
+                        ),
+                      ],
+                    ),
                   ),
+                ]
+                else ...questionItems,
+              ],
+            ),
           ),
         ],
       ),
