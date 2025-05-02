@@ -20,8 +20,7 @@ class MyBottomNavigationBar extends StatefulWidget {
 class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
-    final colors = PrimaryColors.of(context);
+    final colors = ThemeColors.of(context);
 
     return Stack(
       children: [
@@ -30,58 +29,51 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
             child: Container(
               margin: const EdgeInsets.all(16.0),
               decoration: ShapeDecoration(
-                color: const Color(0xFFFEFFFE),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(60),
-                ),
-                shadows: const [
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 3,
-                    offset: Offset(0, 0),
-                    spreadRadius: 0,
-                  ),
-                  BoxShadow(
-                    color: Color(0x14000000),
-                    blurRadius: 3,
-                    offset: Offset(0, 0),
-                    spreadRadius: 0,
-                  )
-                ],
+              color: colors.gray50,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(60),
+                side: BorderSide(color: colors.gray300, width: 0.5),
               ),
-              height: 75,
+              shadows: const [
+                BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 3,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+                ),
+                BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 3,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+                )
+              ],
+              ),
+              height: 60,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(
-                    iconPath: 'assets/icons/pay.svg',
-                    text: '결제',
-                    index: 0,
-                    colors: colors,
-                    gray: gray,
-                  ),
-                  _buildNavItem(
-                    iconPath: 'assets/icons/product.svg',
-                    text: '상품',
-                    index: 1,
-                    colors: colors,
-                    gray: gray,
-                  ),
-                  _buildNavItem(
-                    iconPath: 'assets/icons/contact_us.svg',
-                    text: '문의',
-                    index: 2,
-                    colors: colors,
-                    gray: gray,
-                  ),
-                  _buildNavItem(
-                    iconPath: 'assets/icons/me.svg',
-                    text: '나',
-                    index: 3,
-                    colors: colors,
-                    gray: gray,
-                  ),
-                ],
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                iconPath: 'assets/icons/pay.svg',
+                index: 0,
+                colors: colors,
+                ),
+                _buildNavItem(
+                iconPath: 'assets/icons/product.svg',
+                index: 1,
+                colors: colors,
+                ),
+                _buildNavItem(
+                iconPath: 'assets/icons/contact_us.svg',
+                index: 2,
+                colors: colors,
+                ),
+                _buildNavItem(
+                iconPath: 'assets/icons/me.svg',
+                index: 3,
+                colors: colors,
+                ),
+              ],
               ),
             ),
           ),
@@ -92,33 +84,20 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
 
   Widget _buildNavItem({
     required String iconPath,
-    required String text,
     required int index,
-    required PrimaryColors colors,
-    required Gray gray,
+    required ThemeColors colors,
   }) {
     final isSelected = widget.currentIndex == index;
     return GestureDetector(
       onTap: () => widget.onTap(index),
       child: Padding(
-          padding: const EdgeInsets.only(top: 14.0, bottom: 18.0),
+          padding: const EdgeInsets.only(top: 16),
           child: Column(
             children: [
               SvgPicture.asset(iconPath,
-                  color: isSelected ? colors.primary : gray.gray400,
+                  color: isSelected ? colors.primary : colors.gray400,
                   height: 24.0,
                   width: 24.0),
-              const SizedBox(height: 2.0),
-              Text(
-                text,
-                style: TextStyle(
-                  color: isSelected ? colors.primary : gray.gray400,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
-                  height: 1.40,
-                  letterSpacing: -0.24,
-                ),
-              ),
             ],
           )),
     );

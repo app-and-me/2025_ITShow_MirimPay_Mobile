@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
 
 class AlertPage extends StatefulWidget {
@@ -13,14 +14,18 @@ class AlertPage extends StatefulWidget {
 class _AlertPageState extends State<AlertPage> {
   @override
   Widget build(BuildContext context) {
+    ThemeColors colors = ThemeColors.of(context);
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.gray50,
         leading: IconButton(
           icon: SvgPicture.asset(
             'assets/icons/arrow_back.svg',
-            color: Colors.black,
+            width: 24,
+            height: 24,
+            color: colors.gray900,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -28,7 +33,7 @@ class _AlertPageState extends State<AlertPage> {
         ),
         title: Text(
           '알림', 
-          style: Typo.headlineSub(context, color: Colors.black),
+          style: Typo.headlineSub(context, color: colors.gray900),
         ),
         centerTitle: false,
         titleSpacing: 0,

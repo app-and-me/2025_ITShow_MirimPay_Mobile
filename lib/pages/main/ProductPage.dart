@@ -108,17 +108,17 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
     final filteredProducts = _getFilteredProducts();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.gray50,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           title: Text(
             '상품',
-            style: Typo.headlineLg(context, color: gray.gray900)
+            style: Typo.headlineLg(context, color: colors.gray900)
           ),
           centerTitle: false,
           actions: [
@@ -128,7 +128,7 @@ class _ProductPageState extends State<ProductPage> {
               },
             ),
           ],
-          backgroundColor: Colors.white,
+          backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
         ),
       ),
@@ -161,7 +161,7 @@ class _ProductPageState extends State<ProductPage> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: _showDivider ? gray.gray200 : Colors.transparent,
+                  color: _showDivider ? colors.gray200 : Colors.transparent,
                   width: 1,
                 ),
               ),
@@ -172,7 +172,7 @@ class _ProductPageState extends State<ProductPage> {
               ? Center(
                   child: Text(
                     '${_categories[_selectedCategoryIndex]} 상품이 없습니다',
-                    style: Typo.bodyMd(context, color: gray.gray600),
+                    style: Typo.bodyMd(context, color: colors.gray600),
                   ),
                 )
               : GridView.builder(
@@ -221,24 +221,25 @@ class CategoryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected ? gray.gray50 : gray.gray50,
+          color: isSelected ? colors.gray800 : colors.gray50,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? gray.gray900 : gray.gray300,
+            color: isSelected ? Colors.transparent : colors.gray300,
+            width: isSelected ? 0.0 : 0.7,
           ),
         ),
         child: Text(
           text,
           style: Typo.caption(
             context,
-            color: isSelected ? gray.gray900 : gray.gray800,
+            color: isSelected ? colors.gray100 : colors.gray800,
           ),
         ),
       ),
@@ -262,10 +263,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
-    final primary = PrimaryColors.of(context);
-    final Color textColor = isOutOfStock ? gray.gray500 : Colors.black;
-    final Color stockColor = isOutOfStock ? gray.gray500 : primary.primary;
+    final colors = ThemeColors.of(context);
+    final Color textColor = isOutOfStock ? colors.gray400 : colors.gray900;
+    final Color stockColor = isOutOfStock ? colors.gray400 : colors.primary;
 
     return Container(
       decoration: const BoxDecoration(
@@ -283,7 +283,7 @@ class ProductCard extends StatelessWidget {
             height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: isOutOfStock ? Colors.grey.shade300.withOpacity(0.8) : Colors.grey.shade300,
+              color: colors.gray300,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -300,29 +300,21 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   isOutOfStock || stock == null ? '입고 예정' : stock!,
-                  style: isOutOfStock ? 
-                    TextStyle(
-                      color: gray.gray500,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      height: 1.40,
-                      letterSpacing: -0.24,
-                    ) : 
-                    Typo.caption(context, color: stockColor),
+                  style: Typo.caption(context, color: stockColor)
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   name,
-                  style: Typo.bodySm(context, color: textColor),
+                  style: Typo.bodySm(context, color: textColor)
+                      .copyWith(fontWeight: FontWeight.w400),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   price,
-                  style: Typo.bodySm(context, color: textColor).copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Typo.bodySm(context, color: textColor)
                 ),
               ],
             ),

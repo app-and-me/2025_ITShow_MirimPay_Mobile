@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
+import 'package:mirim_pay/widgets/DateFilterBottomSheet.dart';
 
 class ContactUsPage extends StatefulWidget {
   const ContactUsPage({super.key});
@@ -13,6 +14,7 @@ class ContactUsPage extends StatefulWidget {
 
 class _ContactUsPageState extends State<ContactUsPage> {
   int _selectedCategoryIndex = 0;
+  String _selectedDateFilter = '오늘';
   final List<String> _categories = ['전체', '재고', '입고', '품절', '운영', '그 외'];
   final ScrollController _scrollController = ScrollController();
   bool _showDivider = false;
@@ -89,9 +91,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Map<String, List<Map<String, dynamic>>> _groupQuestionsByDate(List<Map<String, dynamic>> questions) {
     final today = DateTime(2025, 4, 21);
     final weekAgo = today.subtract(const Duration(days: 7));
+    final monthAgo = today.subtract(const Duration(days: 30));
 
     final todayQuestions = <Map<String, dynamic>>[];
     final recentQuestions = <Map<String, dynamic>>[];
+    final monthlyQuestions = <Map<String, dynamic>>[];
 
     for (var question in questions) {
       final parts = question['date'].split('.');
@@ -105,45 +109,97 @@ class _ContactUsPageState extends State<ContactUsPage> {
             questionDate.month == today.month &&
             questionDate.day == today.day) {
           todayQuestions.add(question);
-        } else if (questionDate.isAfter(weekAgo) || questionDate.isAtSameMomentAs(weekAgo)) {
+        } else if (questionDate.isAfter(weekAgo)) {
           recentQuestions.add(question);
+        } else if (questionDate.isAfter(monthAgo)) {
+          monthlyQuestions.add(question);
         }
       }
     }
 
     return {
-      'today': todayQuestions,
-      'recent': recentQuestions,
+      '오늘': todayQuestions,
+      '최근 7일': recentQuestions,
+      '최근 1개월': monthlyQuestions,
     };
+  }
+
+  void _showDateFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DateFilterBottomSheet(
+        currentFilter: _selectedDateFilter,
+        onFilterSelected: (String filter) {
+          setState(() {
+            _selectedDateFilter = filter;
+          });
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
-    final primary = PalettePrimary.of(context);
+    final colors = ThemeColors.of(context);
 
     final filteredQuestions = _getFilteredQuestions();
     final groupedQuestions = _groupQuestionsByDate(filteredQuestions);
-    final todayQuestions = groupedQuestions['today'] ?? [];
-    final recentQuestions = groupedQuestions['recent'] ?? [];
+    
+    List<QuestionItem> questionItems = [];
+    if (_selectedDateFilter == '오늘') {
+      questionItems = (groupedQuestions['오늘'] ?? [])
+          .map((q) => QuestionItem(
+                question: q['question'],
+                date: q['date'],
+                category: q['category'],
+                answer: q['answer'],
+              ))
+          .toList();
+    } else if (_selectedDateFilter == '최근 7일') {
+      questionItems = [
+        ...(groupedQuestions['오늘'] ?? []),
+        ...(groupedQuestions['최근 7일'] ?? []),
+      ]
+          .map((q) => QuestionItem(
+                question: q['question'],
+                date: q['date'],
+                category: q['category'],
+                answer: q['answer'],
+              ))
+          .toList();
+    } else if (_selectedDateFilter == '최근 1개월') {
+      questionItems = [
+        ...(groupedQuestions['오늘'] ?? []),
+        ...(groupedQuestions['최근 7일'] ?? []),
+        ...(groupedQuestions['최근 1개월'] ?? []),
+      ]
+          .map((q) => QuestionItem(
+                question: q['question'],
+                date: q['date'],
+                category: q['category'],
+                answer: q['answer'],
+              ))
+          .toList();
+    }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.gray50,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           title: Text(
             '문의',
-            style: Typo.headlineLg(context, color: gray.gray900),
+            style: Typo.headlineLg(context, color: colors.gray900),
           ),
           centerTitle: false,
           actions: [
             IconButton(
-              icon: SvgPicture.asset('assets/icons/search.svg'),
+              icon: SvgPicture.asset('assets/icons/search.svg', color: colors.gray900),
               onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.white,
+          backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
         ),
       ),
@@ -154,15 +210,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
           height: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: primary.normal, width: 1),
+            border: Border.all(color: colors.primary, width: 1),
           ),
           child: FloatingActionButton.extended(
-            backgroundColor: gray.gray50,
+            backgroundColor: colors.gray50,
             elevation: 0,
             onPressed: () {},
             label: Text(
               '문의하기',
-              style: Typo.button(context, color: primary.normal),
+              style: Typo.bodySm(context, color: colors.primary)
+                  .copyWith(fontWeight: FontWeight.w400),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(100),
@@ -198,18 +255,18 @@ class _ContactUsPageState extends State<ContactUsPage> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: _showDivider ? gray.gray200 : Colors.transparent,
+                  color: _showDivider ? colors.gray200 : Colors.transparent,
                   width: 1,
                 ),
               ),
             ),
           ),
           Expanded(
-            child: todayQuestions.isEmpty && recentQuestions.isEmpty
+            child: questionItems.isEmpty
                 ? Center(
                     child: Text(
                       '${_categories[_selectedCategoryIndex]} 관련 문의가 없습니다',
-                      style: Typo.bodyMd(context, color: gray.gray600),
+                      style: Typo.bodyMd(context, color: colors.gray600),
                     ),
                   )
                 : ListView(
@@ -218,34 +275,15 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       left: 16,
                       right: 16,
                       bottom: 150,
+                      top: 16,
                     ),
                     children: [
-                      if (todayQuestions.isNotEmpty)
-                        DateSection(
-                          title: '오늘',
-                          items: todayQuestions
-                              .map((q) => QuestionItem(
-                                    question: q['question'],
-                                    date: q['date'],
-                                    category: q['category'],
-                                    answer: q['answer'],
-                                  ))
-                              .toList(),
-                        ),
-                      if (todayQuestions.isNotEmpty && recentQuestions.isNotEmpty)
-                        const SizedBox(height: 32),
-                      if (recentQuestions.isNotEmpty)
-                        DateSection(
-                          title: '최근 7일',
-                          items: recentQuestions
-                              .map((q) => QuestionItem(
-                                    question: q['question'],
-                                    date: q['date'],
-                                    category: q['category'],
-                                    answer: q['answer'],
-                                  ))
-                              .toList(),
-                        ),
+                      DateFilterHeader(
+                        title: _selectedDateFilter,
+                        onTap: _showDateFilterBottomSheet,
+                      ),
+                      const SizedBox(height: 16),
+                      ...questionItems,
                     ],
                   ),
           ),
@@ -269,12 +307,12 @@ class CategoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
 
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.only(right: 36),
+        padding: const EdgeInsets.only(right: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -282,17 +320,17 @@ class CategoryTab extends StatelessWidget {
               text,
               style: Typo.headlineSub(
                 context,
-                color: isSelected ? gray.gray900 : gray.gray500,
+                color: isSelected ? colors.gray900 : colors.gray400,
               ),
             ),
-            if (isSelected)
-              SizedBox(
-                width: 35,
-                child: Divider(
-                  height: 1,
-                  color: gray.gray900,
-                ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: 35,
+              height: 1,
+              child: Container(
+                color: isSelected ? colors.gray900 : Colors.transparent,
               ),
+            ),
           ],
         ),
       ),
@@ -300,30 +338,38 @@ class CategoryTab extends StatelessWidget {
   }
 }
 
-class DateSection extends StatelessWidget {
+class DateFilterHeader extends StatelessWidget {
   final String title;
-  final List<QuestionItem> items;
+  final VoidCallback? onTap;
 
-  const DateSection({
+  const DateFilterHeader({
     super.key,
     required this.title,
-    required this.items,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Typo.bodyMd(context, color: gray.gray700),
-        ),
-        const SizedBox(height: 8),
-        ...items,
-      ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Typo.bodyMd(context, color: colors.gray700),
+          ),
+          const SizedBox(width: 5),
+          SvgPicture.asset(
+            'assets/icons/arrow_down.svg',
+            width: 16,
+            height: 16,
+            color: colors.gray700,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -351,7 +397,7 @@ class _QuestionItemState extends State<QuestionItem> {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -359,7 +405,7 @@ class _QuestionItemState extends State<QuestionItem> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: gray.gray100,
+            color: colors.gray100,
             width: 1,
           ),
         ),
@@ -379,27 +425,29 @@ class _QuestionItemState extends State<QuestionItem> {
                 Expanded(
                   child: Text(
                     widget.question,
-                    style: Typo.bodyMd(context, color: gray.gray800),
+                    style: Typo.bodyMd(context, color: colors.gray800),
                   ),
                 ),
                 SvgPicture.asset(
                   isExpanded ? 'assets/icons/arrow_up.svg' : 'assets/icons/arrow_down.svg',
+                  color: colors.gray400,
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.date,
-            style: Typo.caption(context, color: gray.gray500),
           ),
           if (isExpanded && widget.answer != null) ...[
             const SizedBox(height: 16),
             Text(
               widget.answer!,
-              style: Typo.bodySm(context, color: gray.gray700),
+              style: Typo.bodySm(context, color: colors.gray700),
             ),
+            const SizedBox(height: 12),
           ],
+          const SizedBox(height: 8),
+          Text(
+            widget.date,
+            style: Typo.caption(context, color: colors.gray400),
+          ),
         ],
       ),
     );
