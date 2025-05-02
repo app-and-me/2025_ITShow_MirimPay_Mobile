@@ -9,8 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.2.1
   flutter_svg: ^2.1.0
   get: ^4.7.2
+  http: ^1.3.0
+  flutter_secure_storage: ^9.2.4
+  mirim_oauth_flutter: ^1.0.4
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

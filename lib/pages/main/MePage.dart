@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirim_oauth_flutter/mirim_oauth_flutter.dart';
+import 'package:mirim_pay/util/service/AuthService.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
 
@@ -15,25 +17,28 @@ class MePage extends StatefulWidget {
 class _MePageState extends State<MePage> {
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
 
     return Scaffold(
-      backgroundColor: gray.gray50,
+      backgroundColor: colors.gray50,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           title: Text(
             '내 정보', 
-            style: Typo.headlineLg(context, color: gray.gray900)
+            style: Typo.headlineLg(context, color: colors.gray900)
           ),
           centerTitle: false,
           actions: [
             IconButton(
-              icon: SvgPicture.asset('assets/icons/alert_default.svg'), // TODO: 알람 여부에 따라 아이콘 변경
+              icon: SvgPicture.asset(
+                'assets/icons/alert_default.svg',
+                color: colors.gray900,
+              ), // TODO: 알람 여부에 따라 아이콘 변경
               onPressed: () => Get.toNamed('/alert')
             ),
           ],
-          backgroundColor: Colors.white,
+          backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
         ),
       ),
@@ -48,21 +53,28 @@ class _MePageState extends State<MePage> {
                   'assets/icons/me.svg',
                   width: 36,
                   height: 36,
-                  color: gray.gray800,
+                  color: colors.gray800,
                 ),
                 const SizedBox(width: 20),
                 Text(
-                  '1000 김미림',
-                  style: Typo.bodyMd(context, color: gray.gray800),
+                  auth.currentUser?.nickname ?? '이름',
+                  style: Typo.bodyMd(context, color: colors.gray800),
                 ),
+                const Spacer(),
+                SvgPicture.asset(
+                  'assets/icons/arrow_right.svg',
+                  color: colors.gray900,
+                  width: 16,
+                  height: 16,
+                )
               ],
             ),
           ),
-          const SizedBox(height: 59),
+          const SizedBox(height: 42),
           Container(
             width: double.infinity,
             height: 4,
-            color: gray.gray100,
+            color: colors.gray300,
           ),
           const SizedBox(height: 16),
           // TODO: 탭 안으로 이동 기능
@@ -84,7 +96,26 @@ class _MePageState extends State<MePage> {
           Container(
             width: double.infinity,
             height: 4,
-            color: gray.gray100,
+            color: colors.gray300,
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: () async {
+                    await auth.logOut();
+                    Get.offAllNamed('/login');
+                },
+                child: Text(
+                  '로그아웃',
+                  style: Typo.bodyMd(context, color: colors.gray400).copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -104,25 +135,26 @@ class MenuListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gray = Gray.of(context);
+    final colors = ThemeColors.of(context);
     
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 16),        child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 16),        
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
-              style: Typo.bodyMd(context, color: gray.gray800).copyWith(
+              style: Typo.bodyMd(context, color: colors.gray800).copyWith(
                 fontWeight: FontWeight.w400,
               ),
             ),
             SvgPicture.asset(
               'assets/icons/arrow_right.svg',
-              color: gray.gray500,
+              color: colors.gray400,
               width: 16,
               height: 16,
             ),

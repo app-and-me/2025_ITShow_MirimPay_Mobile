@@ -3,6 +3,7 @@ import 'package:mirim_pay/pages/main/ProductPage.dart';
 import 'package:mirim_pay/pages/main/PayPage.dart';
 import 'package:mirim_pay/pages/main/ContactUsPage.dart';
 import 'package:mirim_pay/pages/main/MePage.dart';
+import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/widgets/MyBottomNavigationBar.dart';
 
 class MainPage extends StatefulWidget {
@@ -23,14 +24,16 @@ class _MainPageState extends State<MainPage> {
   ];
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {   
+    ThemeColors colors = ThemeColors.of(context); 
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.gray50,
         toolbarHeight: 18,
         scrolledUnderElevation: 0,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: colors.gray50,
       extendBody: true,
       body: pages[_currentIndex],
       bottomNavigationBar: MyBottomNavigationBar(
