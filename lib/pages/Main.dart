@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mirim_pay/pages/main/ProductPage.dart';
-import 'package:mirim_pay/pages/main/PayPage.dart';
-import 'package:mirim_pay/pages/main/ContactUsPage.dart';
-import 'package:mirim_pay/pages/main/MePage.dart';
+import 'package:mirim_pay/pages/main/product_page.dart';
+import 'package:mirim_pay/pages/main/pay_page.dart';
+import 'package:mirim_pay/pages/main/contactus_page.dart';
+import 'package:mirim_pay/pages/main/me_page.dart';
 import 'package:mirim_pay/util/style/colors.dart';
-import 'package:mirim_pay/widgets/MyBottomNavigationBar.dart';
+import 'package:mirim_pay/widgets/my_bottom_navigation_bar.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,12 +16,19 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
-  final pages = [
-    const PayPage(),
-    const ProductPage(),
-    const ContactUsPage(),
-    const MePage(),
-  ];
+  late List<Widget> pages;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    pages = [
+      const PayPage(),
+      const ProductPage(),
+      const ContactUsPage(),
+      const MePage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {   
