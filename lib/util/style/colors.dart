@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ThemeColors {
@@ -13,7 +12,9 @@ class ThemeColors {
   final Color gray800;
   final Color gray900;
   final Color theme;
+  final Color red;
   final Color yellow;
+  final Color green;
   final Color primary;
   final Color primaryLight;
   final Color primaryLightActive;
@@ -31,7 +32,9 @@ class ThemeColors {
     required this.gray700,
     required this.gray800,
     required this.gray900,
+    required this.red,
     required this.yellow,
+    required this.green,
     required this.primary,
     required this.primaryLight,
     required this.primaryLightActive,
@@ -52,7 +55,9 @@ class ThemeColors {
       gray700: isDarkMode ? const Color(0xffC8C8D2) : const Color(0xff616161),
       gray800: isDarkMode ? const Color(0xffDADAE4) : const Color(0xff424242),
       gray900: isDarkMode ? const Color(0xffF9F9FD) : const Color(0xff212121),
+      red: isDarkMode ? const Color(0xffD32F2F) : const Color(0xffD32F2F),
       yellow: isDarkMode ? const Color(0xffF9A825) : const Color(0xffF9A825),
+      green: isDarkMode ? const Color(0xff4CAF50) : const Color(0xff4CAF50),
       primary: isDarkMode ? const Color(0xff38C172) : const Color(0xff249D57),
       primaryLight: isDarkMode ? const Color(0xff0D371E) : const Color(0xffE9F5EE),
       primaryLightActive: isDarkMode ? const Color(0xff0D371E) : const Color(0xffBBE1CB),
