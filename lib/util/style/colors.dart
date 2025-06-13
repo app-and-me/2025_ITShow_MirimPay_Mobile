@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThemeColors {
+  final Color gray0;
   final Color gray50;
   final Color gray100;
   final Color gray200;
@@ -22,6 +23,7 @@ class ThemeColors {
 
   ThemeColors({
     required this.theme,
+    required this.gray0,
     required this.gray50,
     required this.gray100,
     required this.gray200,
@@ -44,7 +46,8 @@ class ThemeColors {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return ThemeColors(
-      theme: isDarkMode ? const Color(0xffFFFFFF) : const Color(0xff000000),
+      theme: isDarkMode ? const Color(0xffFFFFFF) : const Color(0xffFFFFFF),
+      gray0: isDarkMode ? const Color(0xff000000) : const Color(0xffFFFFFF),
       gray50: isDarkMode ? const Color(0xff212121) : const Color(0xffFAFAFA),
       gray100: isDarkMode ? const Color(0xff202026) : const Color(0xffF5F5F5),
       gray200: isDarkMode ? const Color(0xff2C2C33) : const Color(0xffEEEEEE),
