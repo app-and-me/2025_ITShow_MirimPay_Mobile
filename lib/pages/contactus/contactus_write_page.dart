@@ -4,6 +4,7 @@ import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
 import 'package:get/get.dart';
 import 'package:mirim_pay/widgets/category_badge.dart';
+import 'package:mirim_pay/widgets/contactus_skeleton.dart';
 import 'viewmodels/contactus_write_page_viewmodel.dart';
 
 class ContactUsWritePage extends GetView<ContactUsWritePageViewModel> {
@@ -28,14 +29,7 @@ class ContactUsWritePage extends GetView<ContactUsWritePageViewModel> {
         ),
         actions: [
           Obx(() => controller.isSubmittingObs.value
-              ? const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: SizedBox(
-                    width: 40,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
+              ? const ContactUsButtonSkeleton()
               : GetBuilder<ContactUsWritePageViewModel>(
                   builder: (controller) => TextButton(
                     onPressed:

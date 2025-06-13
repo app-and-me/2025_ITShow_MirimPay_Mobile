@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/contactus_write_model.dart';
-import '../../../app/data/repositories/contactus_write_repository.dart';
+import '../../../app/data/repositories/contact_repository.dart';
 
 class ContactUsWritePageViewModel extends GetxController {
-  final ContactUsWriteRepository _repository = Get.find<ContactUsWriteRepository>();
+  final ContactRepository _repository = Get.find<ContactRepository>();
   
   final TextEditingController contentController = TextEditingController();
   final RxString _selectedCategory = '재고'.obs;
@@ -45,16 +44,9 @@ class ContactUsWritePageViewModel extends GetxController {
 
     try {
       _isSubmitting.value = true;
-      
-      final contactUs = ContactUsWriteModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        category: _selectedCategory.value,
-        content: contentController.text,
-        createdAt: DateTime.now(),
-      );
 
-      final success = await _repository.submitContactUs(contactUs);
-      
+      final success = await _repository.submitQuestion(_selectedCategory.value, contentController.text);
+
       if (success) {
         Get.back();
         Get.snackbar('완료', '문의가 등록되었습니다.');
