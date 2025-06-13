@@ -1,19 +1,25 @@
 class CardWriteModel {
   final String id;
   final String cardNumber;
-  final String expiration;
+  final String expiryYear;
+  final String expiryMonth;
+  final String cardPassword;
+  final String identityNumber;
   final String cvc;
-  final String password;
-  final String birthDate;
+  final String? cardNickname;
+  final bool? isMainCard;
   final DateTime createdAt;
 
   CardWriteModel({
     required this.id,
     required this.cardNumber,
-    required this.expiration,
+    required this.expiryYear,
+    required this.expiryMonth,
+    required this.cardPassword,
+    required this.identityNumber,
     required this.cvc,
-    required this.password,
-    required this.birthDate,
+    this.cardNickname,
+    this.isMainCard,
     required this.createdAt,
   });
 
@@ -21,10 +27,13 @@ class CardWriteModel {
     return CardWriteModel(
       id: json['id'] ?? '',
       cardNumber: json['cardNumber'] ?? '',
-      expiration: json['expiration'] ?? '',
+      expiryYear: json['expiryYear'] ?? '',
+      expiryMonth: json['expiryMonth'] ?? '',
+      cardPassword: json['cardPassword'] ?? '',
+      identityNumber: json['identityNumber'] ?? '',
       cvc: json['cvc'] ?? '',
-      password: json['password'] ?? '',
-      birthDate: json['birthDate'] ?? '',
+      cardNickname: json['cardNickname'],
+      isMainCard: json['isMainCard'],
       createdAt:
           DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
     );
@@ -34,24 +43,25 @@ class CardWriteModel {
     return {
       'id': id,
       'cardNumber': cardNumber,
-      'expiration': expiration,
+      'expiryYear': expiryYear,
+      'expiryMonth': expiryMonth,
+      'cardPassword': cardPassword,
+      'identityNumber': identityNumber,
+      'cardNickname': cardNickname,
       'cvc': cvc,
-      'password': password,
-      'birthDate': birthDate,
+      'isMainCard': isMainCard,
       'createdAt': createdAt.toIso8601String(),
     };
   }
 
-  String get maskedCardNumber {
-    if (cardNumber.length < 4) return cardNumber;
-    return '**** **** **** ${cardNumber.substring(cardNumber.length - 4)}';
-  }
+  String get expiration => '$expiryMonth/$expiryYear';
 
   bool get isValid {
     return cardNumber.isNotEmpty &&
-        expiration.isNotEmpty &&
-        cvc.isNotEmpty &&
-        password.isNotEmpty &&
-        birthDate.isNotEmpty;
+        expiryYear.isNotEmpty &&
+        expiryMonth.isNotEmpty &&
+        cardPassword.isNotEmpty &&
+        identityNumber.isNotEmpty &&
+        cvc.isNotEmpty;
   }
 }

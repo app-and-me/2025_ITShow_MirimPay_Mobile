@@ -34,51 +34,68 @@ class ContactUsPage extends GetView<ContactUsPageViewModel> {
       backgroundColor: colors.gray50,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          title: Text(
-            '문의',
-            style: Typo.headlineLg(context, color: colors.gray900),
-          ),
+        child: Obx(() => AppBar(
+          title: controller.isSearching.value
+              ? TextField(
+                  controller: controller.searchController,
+                  onChanged: controller.onSearchChanged,
+                  autofocus: true,
+                  cursorColor: colors.gray50,
+                  decoration: InputDecoration(
+                    hintText: '문의 검색...',
+                    hintStyle: Typo.bodyMd(context, color: colors.gray500),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: Typo.headlineLg(context, color: colors.gray900),
+                )
+              : Text(
+                  '문의',
+                  style: Typo.headlineLg(context, color: colors.gray900),
+                ),
           centerTitle: false,
           actions: [
             IconButton(
-              icon: SvgPicture.asset('assets/icons/search.svg',
+              icon: SvgPicture.asset(
+                controller.isSearching.value ? 'assets/icons/cancel.svg' : 'assets/icons/search.svg',
                 colorFilter: ColorFilter.mode(
                   colors.gray900,
                   BlendMode.srcIn,
                 ),
               ),
-              onPressed: controller.onSearch,
+              onPressed: controller.isSearching.value ? controller.clearSearch : controller.onSearch,
             ),
           ],
           backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
-        ),
+        )),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 120.0),
-        child: Container(
-          width: 92,
-          height: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: colors.primary, width: 1),
-          ),
-          child: FloatingActionButton.extended(
-            backgroundColor: colors.gray50,
-            elevation: 0,
-            onPressed: controller.navigateToWrite,
-            label: Text(
-              '문의하기',
-              style: Typo.bodySm(context, color: colors.primary)
-                  .copyWith(fontWeight: FontWeight.w400),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
-            ),
-          ),
-        ),
-      ),
+      floatingActionButton: Obx(() => controller.isSearching.value
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 120.0),
+              child: Container(
+                width: 92,
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: colors.primary, width: 1),
+                ),
+                child: FloatingActionButton.extended(
+                  backgroundColor: colors.gray50,
+                  elevation: 0,
+                  onPressed: controller.navigateToWrite,
+                  label: Text(
+                    '문의하기',
+                    style: Typo.bodySm(context, color: colors.primary)
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+              ),
+            )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Column(
         children: [
@@ -172,7 +189,9 @@ class ContactUsPage extends GetView<ContactUsPageViewModel> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '문의 내역이 없습니다',
+                              controller.isSearching.value
+                                  ? '검색 결과가 없습니다'
+                                  : '문의 내역이 없습니다',
                               style:
                                   Typo.bodyMd(context, color: colors.gray800),
                             ),

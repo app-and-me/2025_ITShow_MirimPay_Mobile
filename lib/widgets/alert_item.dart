@@ -22,7 +22,7 @@ class AlertItemWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        color: colors.gray50,
+        color: alert.isRead ? colors.gray50 : colors.primaryLight,
         child: Row(
           children: [
             SvgPicture.asset(

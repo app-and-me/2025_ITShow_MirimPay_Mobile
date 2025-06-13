@@ -5,6 +5,7 @@ import 'package:mirim_pay/pages/card_info/viewmodels/card_info_viewmodel.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
 import 'package:mirim_pay/widgets/card_info_item.dart';
+import 'package:mirim_pay/widgets/card_info_skeleton.dart';
 
 class CardInfoPage extends GetView<CardInfoViewModel> {
   const CardInfoPage({super.key});
@@ -22,8 +23,15 @@ class CardInfoPage extends GetView<CardInfoViewModel> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
+                  return const CardInfoSkeleton();
+                }
+                
+                if (controller.cards.isEmpty) {
                   return Center(
-                    child: CircularProgressIndicator(color: colors.primary),
+                    child: Text(
+                      '등록된 카드가 없어요',
+                      style: Typo.headlineSub(context, color: colors.gray700),
+                    ),
                   );
                 }
                 

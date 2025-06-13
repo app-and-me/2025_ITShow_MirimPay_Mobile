@@ -76,6 +76,9 @@ class AlertPage extends GetView<AlertPageViewModel> {
                   final alert = controller.alertsObs[index];
                   return AlertItemWidget(
                     alert: alert,
+                    onTap: alert.isRead ? null : () {
+                      controller.markAsRead(alert.id);
+                    },
                   );
                 },
               );

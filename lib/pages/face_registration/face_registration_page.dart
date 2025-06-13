@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirim_pay/pages/face_registration/viewmodels/face_registration_viewmodel.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
+import 'package:mirim_pay/widgets/button_skeleton.dart';
 
 class FaceRegistrationPage extends GetView<FaceRegistrationViewModel> {
   const FaceRegistrationPage({super.key});
@@ -100,13 +101,10 @@ class FaceRegistrationPage extends GetView<FaceRegistrationViewModel> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Center(
                   child: controller.isLoading.value
-                    ? SizedBox(
+                    ? ButtonSkeleton(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
-                          color: colors.primary,
-                          strokeWidth: 2,
-                        ),
+                        borderRadius: BorderRadius.circular(10),
                       )
                     : Text(
                         '얼굴 등록하기',

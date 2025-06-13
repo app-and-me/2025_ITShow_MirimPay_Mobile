@@ -4,7 +4,7 @@ import 'package:mirim_pay/pages/main/models/product_model.dart';
 import 'package:mirim_pay/app/data/repositories/product_repository.dart';
 import 'package:mirim_pay/util/constants/app_constants.dart';
 
-class ProductPageViewModel extends GetxController {
+class ProductPageViewModel extends GetxController with WidgetsBindingObserver {
   final ProductRepository _productRepository = Get.find<ProductRepository>();
   
   final RxBool isLoading = false.obs;
@@ -12,7 +12,10 @@ class ProductPageViewModel extends GetxController {
   final RxList<ProductModel> filteredProducts = <ProductModel>[].obs;
   final RxInt selectedCategoryIndex = 0.obs;
   final RxBool showDivider = false.obs;
+  final RxBool isSearching = false.obs;
+  final RxString searchQuery = ''.obs;
   final ScrollController scrollController = ScrollController();
+  final TextEditingController searchController = TextEditingController();
   
   final RxList<String> categories = [
     '전체',
@@ -30,15 +33,36 @@ class ProductPageViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     loadProducts();
     scrollController.addListener(_scrollListener);
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    loadProducts();
+  }
+
+  @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     scrollController.removeListener(_scrollListener);
     scrollController.dispose();
+    searchController.dispose();
     super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      loadProducts();
+    }
+  }
+
+  void refreshData() {
+    loadProducts();
   }
 
   void _scrollListener() {
@@ -63,10 +87,20 @@ class ProductPageViewModel extends GetxController {
 
   void _updateFilteredProducts() {
     final selectedCategory = categories[selectedCategoryIndex.value];
+    List<ProductModel> categoryFiltered;
+    
     if (selectedCategoryIndex.value == 0) {
-      filteredProducts.value = allProducts;
+      categoryFiltered = allProducts;
     } else {
-      filteredProducts.value = allProducts.where((p) => p.category == selectedCategory).toList();
+      categoryFiltered = allProducts.where((p) => p.category == selectedCategory).toList();
+    }
+    
+    if (searchQuery.value.isNotEmpty) {
+      filteredProducts.value = categoryFiltered.where((p) => 
+        p.name.toLowerCase().contains(searchQuery.value.toLowerCase())
+      ).toList();
+    } else {
+      filteredProducts.value = categoryFiltered;
     }
   }
 
@@ -81,6 +115,23 @@ class ProductPageViewModel extends GetxController {
   }
 
   void onSearch() {
-    // TODO: Implement search functionality
+    isSearching.value = !isSearching.value;
+    if (!isSearching.value) {
+      searchController.clear();
+      searchQuery.value = '';
+      _updateFilteredProducts();
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
+    _updateFilteredProducts();
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    isSearching.value = false;
+    _updateFilteredProducts();
   }
 }

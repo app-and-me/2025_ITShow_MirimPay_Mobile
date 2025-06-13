@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mirim_pay/pages/main/product_page.dart';
 import 'package:mirim_pay/pages/main/pay_page.dart';
 import 'package:mirim_pay/pages/main/contactus_page.dart';
 import 'package:mirim_pay/pages/main/me_page.dart';
+import 'package:mirim_pay/pages/main/viewmodels/pay_page_viewmodel.dart';
+import 'package:mirim_pay/pages/main/viewmodels/product_page_viewmodel.dart';
+import 'package:mirim_pay/pages/main/viewmodels/contactus_page_viewmodel.dart';
+import 'package:mirim_pay/pages/main/viewmodels/me_page_viewmodel.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/widgets/my_bottom_navigation_bar.dart';
 
@@ -49,8 +54,35 @@ class _MainPageState extends State<MainPage> {
           setState(() {
             _currentIndex = index;
           });
+          
+          _refreshNotificationStatus(index);
         },
       ),
     );
+  }
+  
+  void _refreshNotificationStatus(int pageIndex) {
+    try {
+      if (pageIndex == 0 && Get.isRegistered<PayPageViewModel>()) {
+        final payController = Get.find<PayPageViewModel>();
+        payController.loadNotificationStatus();
+      }
+      
+      if (pageIndex == 1 && Get.isRegistered<ProductPageViewModel>()) {
+        final productController = Get.find<ProductPageViewModel>();
+        productController.refreshData();
+      }
+      
+      if (pageIndex == 2 && Get.isRegistered<ContactUsPageViewModel>()) {
+        final contactUsController = Get.find<ContactUsPageViewModel>();
+        contactUsController.refreshData();
+      }
+      
+      if (pageIndex == 3 && Get.isRegistered<MePageViewModel>()) {
+        final meController = Get.find<MePageViewModel>();
+        meController.loadNotificationStatus();
+      }
+    } catch (_) {
+    }
   }
 }

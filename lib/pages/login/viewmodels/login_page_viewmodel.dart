@@ -10,8 +10,12 @@ class LoginPageViewModel extends GetxController {
   Future<void> login() async {
     isLoading.value = true;
     try {
-      await _authRepository.login();
-      Get.offAllNamed(AppRoutes.main);
+      final userExists = await _authRepository.login();
+      if (userExists) {
+        Get.offAllNamed(AppRoutes.main);
+      } else {
+        Get.offAllNamed('/pin-setup');
+      }
     } catch (e) {
       Get.snackbar(
         AppStrings.loginFailed,

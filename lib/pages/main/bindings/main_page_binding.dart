@@ -7,6 +7,7 @@ import 'package:mirim_pay/app/data/repositories/card_repository.dart';
 import 'package:mirim_pay/app/data/repositories/product_repository.dart';
 import 'package:mirim_pay/app/data/repositories/contact_repository.dart';
 import 'package:mirim_pay/app/data/repositories/user_repository.dart';
+import 'package:mirim_pay/app/data/repositories/alert_repository.dart';
 
 class MainPageBinding extends Bindings {
   @override
@@ -15,6 +16,7 @@ class MainPageBinding extends Bindings {
     Get.lazyPut<ProductRepository>(() => ProductRepositoryImpl());
     Get.lazyPut<ContactRepository>(() => ContactRepositoryImpl());
     Get.lazyPut<UserRepository>(() => UserRepositoryImpl());
+    Get.lazyPut<AlertRepository>(() => AlertRepositoryImpl());
     
     Get.lazyPut<PayPageViewModel>(() => PayPageViewModel());
     Get.lazyPut<ProductPageViewModel>(() => ProductPageViewModel());

@@ -55,12 +55,12 @@ class CardInfoItem extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  card.name,
+                                  card.cardNickname,
                                   style: Typo.bodyMd(context, color: colors.gray900),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  card.number,
+                                  card.cardNumber,
                                   style: Typo.bodySm(context, color: colors.gray700)
                                       .copyWith(fontWeight: FontWeight.w400),
                                 ),

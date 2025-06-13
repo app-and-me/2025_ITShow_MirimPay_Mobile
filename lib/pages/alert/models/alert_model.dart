@@ -8,20 +8,32 @@ class AlertModel {
   final AlertType type;
   final String message;
   final String date;
+  final bool isRead;
 
   AlertModel({
     required this.id,
     required this.type,
     required this.message,
     required this.date,
+    this.isRead = false,
   });
 
   factory AlertModel.fromJson(Map<String, dynamic> json) {
+    int alertId = json['id'] ?? 0;
+    int typeIndex = 0;
+    
+    if (json['type'] is String) {
+      typeIndex = int.tryParse(json['type']) ?? 0;
+    } else if (json['type'] is int) {
+      typeIndex = json['type'];
+    }
+    
     return AlertModel(
-      id: json['id'] ?? 0,
-      type: AlertType.values[json['type'] ?? 0],
+      id: alertId,
+      type: AlertType.values[typeIndex],
       message: json['message'] ?? '',
       date: json['date'] ?? '',
+      isRead: json['isread'] ?? false,
     );
   }
 
@@ -31,6 +43,7 @@ class AlertModel {
       'type': type.index,
       'message': message,
       'date': date,
+      'isRead': isRead,
     };
   }
 

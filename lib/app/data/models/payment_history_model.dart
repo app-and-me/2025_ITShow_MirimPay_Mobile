@@ -1,35 +1,71 @@
 class PaymentHistory {
-  final String id;
-  final String date;
-  final String productName;
+  final int id;
+  final String orderId;
   final int amount;
+  final String orderName;
+  final String status;
+  final String paymentMethod;
+  final PaymentCard card;
   final DateTime createdAt;
 
   PaymentHistory({
     required this.id,
-    required this.date,
-    required this.productName,
+    required this.orderId,
     required this.amount,
+    required this.orderName,
+    required this.status,
+    required this.paymentMethod,
+    required this.card,
     required this.createdAt,
   });
 
   factory PaymentHistory.fromJson(Map<String, dynamic> json) {
     return PaymentHistory(
       id: json['id'],
-      date: json['date'],
-      productName: json['product_name'],
+      orderId: json['orderId'],
       amount: json['amount'],
-      createdAt: DateTime.parse(json['created_at']),
+      orderName: json['orderName'],
+      status: json['status'],
+      paymentMethod: json['paymentMethod'],
+      card: PaymentCard.fromJson(json['card']),
+      createdAt: DateTime.parse(json['createdAt']).toLocal(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'date': date,
-      'product_name': productName,
+      'orderId': orderId,
       'amount': amount,
-      'created_at': createdAt.toIso8601String(),
+      'orderName': orderName,
+      'status': status,
+      'paymentMethod': paymentMethod,
+      'card': card.toJson(),
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+}
+
+class PaymentCard {
+  final String cardCompany;
+  final String cardNumber;
+
+  PaymentCard({
+    required this.cardCompany,
+    required this.cardNumber,
+  });
+
+  factory PaymentCard.fromJson(Map<String, dynamic> json) {
+    return PaymentCard(
+      cardCompany: json['cardCompany'],
+      cardNumber: json['cardNumber'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cardCompany': cardCompany,
+      'cardNumber': cardNumber,
     };
   }
 }

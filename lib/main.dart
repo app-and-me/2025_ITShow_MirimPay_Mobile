@@ -9,6 +9,12 @@ import 'package:mirim_pay/pages/contactus/contactus_write_page.dart';
 import 'package:mirim_pay/pages/contactus/bindings/contactus_write_page_binding.dart';
 import 'package:mirim_pay/pages/login/login_page.dart';
 import 'package:mirim_pay/pages/login/bindings/login_page_binding.dart';
+import 'package:mirim_pay/pages/pin_setup/bindings/pin_confirm_binding.dart';
+import 'package:mirim_pay/pages/pin_setup/bindings/pin_setup_binding.dart';
+import 'package:mirim_pay/pages/pin_setup/pin_confirm_page.dart';
+import 'package:mirim_pay/pages/pin_setup/pin_setup_page.dart';
+import 'package:mirim_pay/util/constants/app_constants.dart';
+import 'package:mirim_pay/widgets/app_loading_skeleton.dart';
 import 'package:mirim_pay/pages/main/contactus_page.dart';
 import 'package:mirim_pay/pages/main/bindings/contactus_page_binding.dart';
 import 'package:mirim_pay/pages/main/me_page.dart';
@@ -25,8 +31,17 @@ import 'package:mirim_pay/pages/card_info/card_info_page.dart';
 import 'package:mirim_pay/pages/card_info/bindings/card_info_binding.dart';
 import 'package:mirim_pay/pages/face_registration/face_registration_page.dart';
 import 'package:mirim_pay/pages/face_registration/bindings/face_registration_binding.dart';
+import 'package:mirim_pay/pages/face_registration/face_camera_page.dart';
+import 'package:mirim_pay/pages/face_registration/bindings/face_camera_binding.dart';
+import 'package:mirim_pay/pages/face_registration/face_registration_success_page.dart';
+import 'package:mirim_pay/pages/face_registration/bindings/face_registration_success_binding.dart';
+import 'package:mirim_pay/pages/password_reset/password_reset_current_page.dart';
+import 'package:mirim_pay/pages/password_reset/bindings/password_reset_current_binding.dart';
+import 'package:mirim_pay/pages/password_reset/password_reset_new_page.dart';
+import 'package:mirim_pay/pages/password_reset/bindings/password_reset_new_binding.dart';
+import 'package:mirim_pay/pages/password_reset/password_reset_confirm_page.dart';
+import 'package:mirim_pay/pages/password_reset/bindings/password_reset_confirm_binding.dart';
 import 'package:mirim_pay/util/service/auth_service.dart';
-import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/theme.dart';
 
 Future<void> main() async {
@@ -70,18 +85,10 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeColors colors = ThemeColors.of(context);
-    
     if (isLoading) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(
-              color: colors.gray100,
-            ),
-          ),
-        ),
+        home: const AppLoadingSkeleton(),
         theme: initThemeData(brightness: Brightness.light),
         darkTheme: initThemeData(brightness: Brightness.dark),
         themeMode: ThemeMode.system,
@@ -91,67 +98,102 @@ class _MainAppState extends State<MainApp> {
     return GetMaterialApp(
       getPages: [
         GetPage(
-          name: '/', 
+          name: AppRoutes.main, 
           page: () => const MainPage(),
           binding: MainPageBinding(),
         ),
         GetPage(
-          name: '/product', 
+          name: AppRoutes.product, 
           page: () => const ProductPage(),
           binding: ProductPageBinding(),
         ),
         GetPage(
-          name: '/contact-us', 
+          name: AppRoutes.contactUs, 
           page: () => const ContactUsPage(),
           binding: ContactUsPageBinding(),
         ),
         GetPage(
-          name: '/me', 
+          name: AppRoutes.me, 
           page: () => const MePage(),
           binding: MePageBinding(),
         ),
         GetPage(
-          name: '/pay', 
+          name: AppRoutes.pay, 
           page: () => const PayPage(),
           binding: PayPageBinding(),
         ),
         GetPage(
-          name: '/alert', 
+          name: AppRoutes.alert, 
           page: () => const AlertPage(),
           binding: AlertPageBinding(),
         ),
         GetPage(
-          name: '/login', 
+          name: AppRoutes.login, 
           page: () => const LoginPage(),
           binding: LoginPageBinding(),
         ),
         GetPage(
-          name: '/contact_us_write', 
+          name: AppRoutes.contactUsWrite, 
           page: () => const ContactUsWritePage(),
           binding: ContactUsWritePageBinding(),
         ),
         GetPage(
-          name: '/card_write', 
+          name: AppRoutes.cardWrite, 
           page: () => const CardWritePage(),
           binding: CardWritePageBinding(),
         ),
         GetPage(
-          name: '/payment-history', 
+          name: AppRoutes.paymentHistory, 
           page: () => const PaymentHistoryPage(),
           binding: PaymentHistoryBinding(),
         ),
         GetPage(
-          name: '/card-info', 
+          name: AppRoutes.cardInfo, 
           page: () => const CardInfoPage(),
           binding: CardInfoBinding(),
         ),
         GetPage(
-          name: '/face-registration', 
+          name: AppRoutes.faceRegistration, 
           page: () => const FaceRegistrationPage(),
           binding: FaceRegistrationBinding(),
         ),
+        GetPage(
+          name: AppRoutes.faceCamera, 
+          page: () => const FaceCameraPage(),
+          binding: FaceCameraBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.faceRegistrationSuccess, 
+          page: () => const FaceRegistrationSuccessPage(),
+          binding: FaceRegistrationSuccessBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.pinSetup, 
+          page: () => const PinSetupPage(),
+          binding: PinSetupBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.pinConfirm, 
+          page: () => const PinConfirmPage(),
+          binding: PinConfirmBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.passwordResetCurrent, 
+          page: () => const PasswordResetCurrentPage(),
+          binding: PasswordResetCurrentBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.passwordResetNew, 
+          page: () => const PasswordResetNewPage(),
+          binding: PasswordResetNewBinding(),
+        ),
+        GetPage(
+          name: AppRoutes.passwordResetConfirm, 
+          page: () => const PasswordResetConfirmPage(),
+          binding: PasswordResetConfirmBinding(),
+        ),
       ],
-      initialRoute: isLoggedIn ? '/' : '/login',
+      initialRoute: isLoggedIn ? AppRoutes.main : AppRoutes.login,
       debugShowCheckedModeBanner: false,
       theme: initThemeData(brightness: Brightness.light),
       darkTheme: initThemeData(brightness: Brightness.dark),

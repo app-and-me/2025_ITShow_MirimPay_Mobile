@@ -22,7 +22,8 @@ class MenuListItem extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 16),        
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        color: Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

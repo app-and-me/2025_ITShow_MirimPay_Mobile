@@ -24,16 +24,12 @@ class PayPage extends GetView<PayPageViewModel> {
         ),
         centerTitle: false,
         actions: [
-          IconButton(
+          Obx(() => IconButton(
             icon: SvgPicture.asset(
-              controller.alertIconPath,
-              colorFilter: ColorFilter.mode(
-                colors.gray900,
-                BlendMode.srcIn,
-              ),
+              context.isDarkMode ? controller.alertIconPathDark : controller.alertIconPathLight,
             ),
             onPressed: controller.navigateToAlert,
-          ),
+          )),
         ],
         backgroundColor: colors.gray50,
         scrolledUnderElevation: 0,
@@ -46,11 +42,36 @@ class PayPage extends GetView<PayPageViewModel> {
               children: [
                 const CardSkeleton(),
                 const SizedBox(height: 24),
-                Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: colors.gray200,
-                    borderRadius: BorderRadius.circular(12),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: colors.gray200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: colors.gray300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 50,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: colors.gray300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -68,10 +89,11 @@ class PayPage extends GetView<PayPageViewModel> {
                 onAddCard: controller.navigateToAddCard,
               ),
               const SizedBox(height: 24),
-              QrPayButton(
-                isDisabled: controller.isPaymentDisabled,
-                cardId: controller.currentCard?.id ?? 0,
-              ),
+              if (controller.currentCard != null)
+                QrPayButton(
+                  isDisabled: controller.isPaymentDisabled,
+                  card: controller.currentCard!,
+                ),
             ],
           );
         }),

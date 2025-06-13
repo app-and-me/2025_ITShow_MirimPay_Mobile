@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
+import 'package:mirim_pay/widgets/button_skeleton.dart';
 import 'viewmodels/card_write_page_viewmodel.dart';
 
 class CardWritePage extends GetView<CardWritePageViewModel> {
@@ -110,7 +111,7 @@ class CardWritePage extends GetView<CardWritePageViewModel> {
                             style: Typo.bodyMd(context, color: colors.gray800)
                                 .copyWith(fontWeight: FontWeight.w400),
                             decoration: InputDecoration(
-                              hintText: 'MMYY',
+                              hintText: 'MM/YY',
                               hintStyle:
                                   Typo.bodyMd(context, color: colors.gray400)
                                       .copyWith(fontWeight: FontWeight.w400),
@@ -120,6 +121,7 @@ class CardWritePage extends GetView<CardWritePageViewModel> {
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(4),
+                              _ExpirationDateFormatter(),
                             ],
                           ),
                         ),
@@ -253,16 +255,10 @@ class CardWritePage extends GetView<CardWritePageViewModel> {
                             width: 1,
                           ),
                         ),
-                        child: Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(colors.gray500),
-                            ),
-                          ),
+                        child: ButtonSkeleton(
+                          width: 20,
+                          height: 20,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       )
                     : GestureDetector(
@@ -320,6 +316,35 @@ class _CardNumberFormatter extends TextInputFormatter {
       if ((i + 1) % 4 == 0 && i != text.length - 1) {
         buffer.write('    -    ');
       }
+    }
+
+    return TextEditingValue(
+      text: buffer.toString(),
+      selection: TextSelection.collapsed(offset: buffer.length),
+    );
+  }
+}
+
+class _ExpirationDateFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    String text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    
+    if (text.length > 4) {
+      text = text.substring(0, 4);
+    }
+
+    StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < text.length; i++) {
+      if (i == 2) {
+        buffer.write('/');
+      }
+      buffer.write(text[i]);
     }
 
     return TextEditingValue(

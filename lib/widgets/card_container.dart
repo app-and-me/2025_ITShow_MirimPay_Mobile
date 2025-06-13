@@ -29,7 +29,7 @@ class CardContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              card.name,
+              card.cardNickname,
               style: Typo.bodyMd(context, color: colors.gray700),
             ),
             const SizedBox(height: 8),

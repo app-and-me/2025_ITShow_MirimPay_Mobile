@@ -15,6 +15,10 @@ class PaymentHistoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = ThemeColors.of(context);
     
+    String formatDate(DateTime date) {
+      return '${date.month}.${date.day}';
+    }
+    
     return Container(
       height: 70,
       decoration: BoxDecoration(
@@ -29,12 +33,12 @@ class PaymentHistoryItem extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  payment.date,
+                  formatDate(payment.createdAt),
                   style: Typo.bodySm(context, color: colors.gray600),
                 ),
                 const SizedBox(width: 36),
                 Text(
-                  payment.productName,
+                  payment.orderName,
                   style: Typo.bodyMd(context, color: colors.gray800)
                       .copyWith(fontWeight: FontWeight.w400),
                 ),

@@ -4,6 +4,7 @@ import 'package:mirim_pay/app/data/models/card_model.dart' as card_model;
 import 'package:mirim_pay/app/data/repositories/card_repository.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
+import '../../main/viewmodels/pay_page_viewmodel.dart';
 
 class CardInfoViewModel extends GetxController {
   final CardRepository _repository = Get.find<CardRepository>();
@@ -67,12 +68,12 @@ class CardInfoViewModel extends GetxController {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        card.name,
+                        card.cardNickname,
                         style: Typo.bodyMd(context, color: colors.gray900),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        card.number,
+                        card.cardNumber,
                         style: Typo.bodySm(context, color: colors.gray700)
                             .copyWith(fontWeight: FontWeight.w400),
                       ),
@@ -205,8 +206,15 @@ class CardInfoViewModel extends GetxController {
     isDeleting.value = true;
     try {
       await _repository.removeCard(cardId);
-      cards.removeWhere((card) => card.id == cardId);
       Get.snackbar('완료', '카드가 삭제되었습니다.');
+      
+      await loadCards();
+      
+      try {
+        final payPageController = Get.find<PayPageViewModel>();
+        await payPageController.refreshCards();
+      } catch (_) {
+      }
     } catch (e) {
       Get.snackbar('오류', '카드 삭제에 실패했습니다.');
     } finally {
@@ -218,10 +226,15 @@ class CardInfoViewModel extends GetxController {
     isLoading.value = true;
     try {
       await _repository.setMainCard(cardId);
-      for (var card in cards) {
-        card.isMainCard = (card.id == cardId);
-      }
       Get.snackbar('완료', '메인 카드가 설정되었습니다.');
+      
+      await loadCards();
+      
+      try {
+        final payPageController = Get.find<PayPageViewModel>();
+        await payPageController.refreshCards();
+      } catch (_) {
+      }
     } catch (e) {
       Get.snackbar('오류', '메인 카드 설정에 실패했습니다.');
     } finally {

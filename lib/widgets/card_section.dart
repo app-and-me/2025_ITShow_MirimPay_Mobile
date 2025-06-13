@@ -30,7 +30,7 @@ class CardSection extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (cards.length > 1 && currentIndex > 0)
+        if ((cards.length > 1 && currentIndex > 0) || (showAddCard && cards.isNotEmpty))
           GestureDetector(
             onTap: onPrevCard,
             child: SvgPicture.asset(

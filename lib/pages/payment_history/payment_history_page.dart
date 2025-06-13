@@ -5,6 +5,7 @@ import 'package:mirim_pay/pages/payment_history/viewmodels/payment_history_viewm
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
 import 'package:mirim_pay/widgets/payment_history_item.dart';
+import 'package:mirim_pay/widgets/payment_history_skeleton.dart';
 
 class PaymentHistoryPage extends GetView<PaymentHistoryViewModel> {
   const PaymentHistoryPage({super.key});
@@ -22,8 +23,15 @@ class PaymentHistoryPage extends GetView<PaymentHistoryViewModel> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
+                  return const PaymentHistorySkeleton();
+                }
+                
+                if (controller.todayPayments.isEmpty && controller.recentPayments.isEmpty) {
                   return Center(
-                    child: CircularProgressIndicator(color: colors.primary),
+                    child: Text(
+                      '최근 결제 내역이 없어요',
+                      style: Typo.headlineSub(context, color: colors.gray700),
+                    ),
                   );
                 }
                 
