@@ -26,14 +26,6 @@ class _QuestionItemState extends State<QuestionItem> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: colors.gray100,
-            width: 1,
-          ),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,7 +40,7 @@ class _QuestionItemState extends State<QuestionItem> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.question.question,
+                    widget.question.title,
                     style: Typo.bodyMd(context, color: colors.gray800),
                   ),
                 ),
@@ -59,10 +51,10 @@ class _QuestionItemState extends State<QuestionItem> {
               ],
             ),
           ),
-          if (isExpanded && widget.question.answer != null) ...[
+          if (isExpanded && widget.question.response != null) ...[
             const SizedBox(height: 16),
             Text(
-              widget.question.answer!,
+              widget.question.response!,
               style: Typo.bodySm(context, color: colors.gray700),
             ),
             const SizedBox(height: 12),
@@ -71,12 +63,7 @@ class _QuestionItemState extends State<QuestionItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.question.category,
-                style: Typo.caption(context, color: colors.gray500),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.question.date,
+                DateTime.parse(widget.question.createdAt).toLocal().toString().split(' ')[0].replaceAll('-', '.'),
                 style: Typo.caption(context, color: colors.gray400),
               ),
             ],

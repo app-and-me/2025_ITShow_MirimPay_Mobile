@@ -3,16 +3,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
+import 'package:mirim_pay/app/data/models/card_model.dart' as card_model;
 
 class QrPayButton extends StatelessWidget {
   final bool isDisabled;
-  final int cardId;
+  final card_model.Card card;
   final VoidCallback? onTap;
 
   const QrPayButton({
     super.key,
     this.isDisabled = false,
-    required this.cardId,
+    required this.card,
     this.onTap,
   });
 
@@ -27,12 +28,12 @@ class QrPayButton extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return QrPaymentDialog(cardId: cardId);
+                  return QrPaymentDialog(card: card);
                 },
               );
             },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 65, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 12),
         decoration: BoxDecoration(
           color: colors.gray50,
           border: Border.all(
@@ -70,11 +71,11 @@ class QrPayButton extends StatelessWidget {
 }
 
 class QrPaymentDialog extends StatelessWidget {
-  final int cardId;
+  final card_model.Card card;
 
   const QrPaymentDialog({
     super.key,
-    required this.cardId,
+    required this.card,
   });
 
   @override
@@ -113,10 +114,9 @@ class QrPaymentDialog extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             QrImageView(
-              data: '$cardId',
+              data: '{"billingKey" : "${card.billingKey}", "customerKey" : "${card.customerKey}"}',
               version: QrVersions.auto,
-              size: 284,
-              backgroundColor: colors.gray50,
+              backgroundColor: colors.gray900,
             ),
           ],
         ),
