@@ -14,8 +14,11 @@ dependencies:
   get: ^4.7.2
   http: ^1.4.0
   flutter_secure_storage: ^9.2.4
-  mirim_oauth_flutter: ^1.0.4
+  mirim_oauth_flutter: ^1.0.6
   qr_flutter: ^4.1.0
+  camera: ^0.11.0+2
+  google_mlkit_face_detection: ^0.13.1
+  permission_handler: ^12.0.0+1
 
 dev_dependencies:
   flutter_test:
