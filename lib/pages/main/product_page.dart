@@ -19,19 +19,39 @@ class ProductPage extends GetView<ProductPageViewModel> {
       backgroundColor: colors.gray50,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          title: Text('상품',
-              style: Typo.headlineLg(context, color: colors.gray900)),
+        child: Obx(() => AppBar(
+          title: controller.isSearching.value
+              ? TextField(
+                  controller: controller.searchController,
+                  onChanged: controller.onSearchChanged,
+                  autofocus: true,
+                  cursorColor: colors.gray50,
+                  decoration: InputDecoration(
+                    hintText: '상품 검색...',
+                    hintStyle: Typo.bodyMd(context, color: colors.gray500),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: Typo.headlineLg(context, color: colors.gray900),
+                )
+              : Text('상품',
+                  style: Typo.headlineLg(context, color: colors.gray900)),
           centerTitle: false,
           actions: [
             IconButton(
-              icon: SvgPicture.asset('assets/icons/search.svg'),
-              onPressed: () {},
+              icon: SvgPicture.asset(
+                controller.isSearching.value ? 'assets/icons/cancel.svg' : 'assets/icons/search.svg',
+                colorFilter: ColorFilter.mode(
+                  colors.gray900,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: controller.isSearching.value ? controller.clearSearch : controller.onSearch,
             ),
           ],
           backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
-        ),
+        )),
       ),
       body: Column(
         children: [
@@ -96,7 +116,9 @@ class ProductPage extends GetView<ProductPageViewModel> {
               if (filteredProducts.isEmpty) {
                 return Center(
                   child: Text(
-                    '${controller.selectedCategory} 상품이 없습니다',
+                    controller.isSearching.value 
+                        ? '검색 결과가 없습니다'
+                        : '${controller.selectedCategory} 상품이 없습니다',
                     style: Typo.bodyMd(context, color: colors.gray600),
                   ),
                 );
@@ -121,7 +143,7 @@ class ProductPage extends GetView<ProductPageViewModel> {
                   final product = filteredProducts[index];
                   return ProductCard(
                     name: product.name,
-                    price: product.price,
+                    price: product.priceText,
                     stock: product.stockText,
                     isOutOfStock: product.isOutOfStock,
                   );

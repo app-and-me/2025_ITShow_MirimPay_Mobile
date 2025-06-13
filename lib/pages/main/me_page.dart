@@ -30,16 +30,12 @@ class MePage extends GetView<MePageViewModel> {
           ),
           centerTitle: false,
           actions: [
-            IconButton(
+            Obx(() => IconButton(
               icon: SvgPicture.asset(
-                controller.alertIconPath,
-                colorFilter: ColorFilter.mode(
-                  colors.gray900, 
-                  BlendMode.srcIn
-                ),
+                context.isDarkMode ? controller.alertIconPathDark : controller.alertIconPathLight,
               ),
               onPressed: controller.navigateToAlert,
-            ),
+            )),
           ],
           backgroundColor: colors.gray50,
           scrolledUnderElevation: 0,
