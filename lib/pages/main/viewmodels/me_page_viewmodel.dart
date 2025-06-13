@@ -13,6 +13,7 @@ class MePageViewModel extends GetxController {
   
   RxList<MenuItemModel> get menuItems => [
     MenuItemModel(title: AppStrings.paymentHistory),
+    MenuItemModel(title: AppStrings.passwordReset),
     MenuItemModel(title: AppStrings.cardInfo),
     MenuItemModel(title: AppStrings.faceRegistration),
   ].obs;
@@ -21,6 +22,20 @@ class MePageViewModel extends GetxController {
   void onInit() {
     super.onInit();
     loadUserData();
+  }
+  
+  @override
+  void onReady() {
+    super.onReady();
+    loadNotificationStatus();
+  }
+  
+  Future<void> loadNotificationStatus() async {
+    try {
+      final hasNotifications = await _userRepository.hasNewNotifications();
+      hasNewNotification.value = hasNotifications;
+    } catch (_) {
+    }
   }
   
   Future<void> loadUserData() async {
@@ -44,22 +59,28 @@ class MePageViewModel extends GetxController {
         navigateToPaymentHistory();
         break;
       case 1:
-        navigateToCardInfo();
+        navigateToPasswordReset();
         break;
       case 2:
+        navigateToCardInfo();
+        break;
+      case 3:
         navigateToFaceRegistration();
         break;
     }
   }
-  
-  void navigateToPaymentHistory() {
+   void navigateToPaymentHistory() {
     Get.toNamed(AppRoutes.paymentHistory);
   }
   
+  void navigateToPasswordReset() {
+    Get.toNamed('password-reset-current');
+  }
+
   void navigateToCardInfo() {
     Get.toNamed(AppRoutes.cardInfo);
   }
-  
+
   void navigateToFaceRegistration() {
     Get.toNamed(AppRoutes.faceRegistration);
   }
@@ -81,7 +102,12 @@ class MePageViewModel extends GetxController {
   }
   
   String get userName => currentUser.value?.nickname ?? AppStrings.defaultName;
-  String get alertIconPath => hasNewNotification.value 
-      ? 'assets/icons/alert_exist.svg' 
-      : 'assets/icons/alert_default.svg';
+  String get alertIconPathDark => hasNewNotification.value 
+      ? 'assets/icons/alert_exist_dark.svg' 
+      : 'assets/icons/alert_default_dark.svg';
+
+  String get alertIconPathLight => hasNewNotification.value 
+      ? 'assets/icons/alert_exist_light.svg' 
+      : 'assets/icons/alert_default_light.svg';
+
 }

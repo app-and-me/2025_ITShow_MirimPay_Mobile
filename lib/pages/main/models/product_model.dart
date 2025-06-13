@@ -1,42 +1,51 @@
 class ProductModel {
+  final String id;
   final String name;
-  final String price;
-  final int stock;
+  final int price;
+  final int quantity;
   final String category;
-  final bool isOutOfStock;
 
   ProductModel({
+    required this.id,
     required this.name,
     required this.price,
-    required this.stock,
+    required this.quantity,
     required this.category,
-    required this.isOutOfStock,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
-      price: json['price'] ?? '',
-      stock: json['stock'] ?? 0,
+      price: json['price'] ?? 0,
+      quantity: json['quantity'] ?? 0,
       category: json['category'] ?? '',
-      isOutOfStock: json['isOutOfStock'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'price': price,
-      'stock': stock,
+      'quantity': quantity,
       'category': category,
-      'isOutOfStock': isOutOfStock,
     };
   }
 
+  bool get isOutOfStock => quantity == 0;
+
   String get stockText {
-    if (isOutOfStock || stock == 0) {
+    if (isOutOfStock) {
       return '입고 예정';
     }
-    return '재고 : $stock개';
+    return '재고 : $quantity개';
+  }
+
+  String get priceText {
+    return '${price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    )}원';
   }
 }

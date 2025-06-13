@@ -1,31 +1,39 @@
 class QuestionModel {
-  final String question;
-  final String date;
+  final int id;
+  final String title;
+  final String? response;
+  final String status;
   final String category;
-  final String? answer;
+  final String createdAt;
 
   QuestionModel({
-    required this.question,
-    required this.date,
+    required this.id,
+    required this.title,
+    this.response,
+    required this.status,
     required this.category,
-    this.answer,
+    required this.createdAt,
   });
 
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     return QuestionModel(
-      question: json['question'] ?? '',
-      date: json['date'] ?? '',
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      response: json['response'],
+      status: json['status'] ?? '',
       category: json['category'] ?? '',
-      answer: json['answer'],
+      createdAt: json['createdAt'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'question': question,
-      'date': date,
+      'id': id,
+      'title': title,
+      'response': response,
+      'status': status,
       'category': category,
-      'answer': answer,
+      'createdAt': createdAt,
     };
   }
 }

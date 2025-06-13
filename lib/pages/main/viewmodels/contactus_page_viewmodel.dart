@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirim_pay/pages/main/models/question_model.dart';
 import 'package:mirim_pay/app/data/repositories/contact_repository.dart';
 import 'package:mirim_pay/util/constants/app_constants.dart';
 
-class ContactUsPageViewModel extends GetxController {
+class ContactUsPageViewModel extends GetxController with WidgetsBindingObserver {
   final ContactRepository _contactRepository = Get.find<ContactRepository>();
   
   final RxBool isLoading = false.obs;
@@ -13,6 +14,9 @@ class ContactUsPageViewModel extends GetxController {
   final RxInt selectedCategoryIndex = 0.obs;
   final RxString selectedDateFilter = '오늘'.obs;
   final RxBool showDivider = false.obs;
+  final RxBool isSearching = false.obs;
+  final RxString searchQuery = ''.obs;
+  final TextEditingController searchController = TextEditingController();
   
   final RxList<String> categories = ['전체', '재고', '입고', '품절', '운영', '그 외'].obs;
   final RxList<String> dateFilters = ['오늘', '최근 7일', '최근 1개월'].obs;
@@ -20,6 +24,32 @@ class ContactUsPageViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+    loadQuestions();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    loadQuestions();
+  }
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    searchController.dispose();
+    super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      loadQuestions();
+    }
+  }
+
+  void refreshData() {
     loadQuestions();
   }
 
@@ -38,11 +68,23 @@ class ContactUsPageViewModel extends GetxController {
 
   void _updateFilteredQuestions() {
     final selectedCategory = categories[selectedCategoryIndex.value];
+    List<QuestionModel> categoryFiltered;
+    
     if (selectedCategoryIndex.value == 0) {
-      filteredQuestions.value = allQuestions;
+      categoryFiltered = allQuestions;
     } else {
-      filteredQuestions.value = allQuestions.where((q) => q.category == selectedCategory).toList();
+      categoryFiltered = allQuestions.where((q) => q.category == selectedCategory).toList();
     }
+    
+    if (searchQuery.value.isNotEmpty) {
+      filteredQuestions.value = categoryFiltered.where((q) => 
+        q.title.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+        q.category.toLowerCase().contains(searchQuery.value.toLowerCase())
+      ).toList();
+    } else {
+      filteredQuestions.value = categoryFiltered;
+    }
+    
     _updateDisplayedQuestions();
   }
 
@@ -57,7 +99,7 @@ class ContactUsPageViewModel extends GetxController {
     final monthlyQuestions = <QuestionModel>[];
 
     for (var question in questions) {
-      final parts = question.date.split('.');
+      final parts = DateTime.parse(question.createdAt).toString().split(' ')[0].split('-');
       if (parts.length == 3) {
         final year = int.parse(parts[0]);
         final month = int.parse(parts[1]);
@@ -121,10 +163,27 @@ class ContactUsPageViewModel extends GetxController {
   }
 
   void navigateToWrite() {
-    Get.toNamed('/contact_us_write');
+    Get.toNamed(AppRoutes.contactUsWrite);
   }
 
   void onSearch() {
-    // TODO: Implement search functionality
+    isSearching.value = !isSearching.value;
+    if (!isSearching.value) {
+      searchController.clear();
+      searchQuery.value = '';
+      _updateFilteredQuestions();
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
+    _updateFilteredQuestions();
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    isSearching.value = false;
+    _updateFilteredQuestions();
   }
 }

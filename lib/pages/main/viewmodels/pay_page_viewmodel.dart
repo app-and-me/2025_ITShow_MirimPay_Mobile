@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:mirim_pay/app/data/models/card_model.dart';
 import 'package:mirim_pay/app/data/repositories/card_repository.dart';
+import 'package:mirim_pay/app/data/repositories/alert_repository.dart';
 import 'package:mirim_pay/util/constants/app_constants.dart';
 
 class PayPageViewModel extends GetxController {
   final CardRepository _cardRepository = Get.find<CardRepository>();
+  final AlertRepository _alertRepository = Get.find<AlertRepository>();
   
   final RxBool isLoading = false.obs;
   final RxList<Card> cards = <Card>[].obs;
@@ -16,6 +18,13 @@ class PayPageViewModel extends GetxController {
   void onInit() {
     super.onInit();
     loadCards();
+    loadNotificationStatus();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    loadNotificationStatus();
   }
 
   Future<void> loadCards() async {
@@ -25,12 +34,29 @@ class PayPageViewModel extends GetxController {
       cards.value = userCards;
       if (userCards.isEmpty) {
         showAddCard.value = true;
+      } else {
+        showAddCard.value = false;
+        if (currentCardIndex.value >= userCards.length) {
+          currentCardIndex.value = userCards.length - 1;
+        }
       }
     } catch (e) {
       Get.snackbar(AppStrings.error, '카드 정보를 불러오는데 실패했습니다.');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> loadNotificationStatus() async {
+    try {
+      final unreadCount = await _alertRepository.getUnreadCount();
+      hasNewNotification.value = unreadCount > 0;
+    } catch (_) {
+    }
+  }
+
+  Future<void> refreshCards() async {
+    await loadCards();
   }
 
   void nextCard() {
@@ -56,7 +82,7 @@ class PayPageViewModel extends GetxController {
   }
 
   void navigateToAddCard() {
-    Get.toNamed('/card_write');
+    Get.toNamed(AppRoutes.cardWrite);
   }
 
   Card? get currentCard => cards.isNotEmpty && !showAddCard.value 
@@ -67,7 +93,11 @@ class PayPageViewModel extends GetxController {
   bool get canNavigateRight => cards.isNotEmpty && !showAddCard.value;
   bool get isPaymentDisabled => cards.isEmpty || showAddCard.value;
 
-  String get alertIconPath => hasNewNotification.value 
-      ? 'assets/icons/alert_exist.svg' 
-      : 'assets/icons/alert_default.svg';
+  String get alertIconPathDark => hasNewNotification.value 
+      ? 'assets/icons/alert_exist_dark.svg' 
+      : 'assets/icons/alert_default_dark.svg';
+
+  String get alertIconPathLight => hasNewNotification.value 
+      ? 'assets/icons/alert_exist_light.svg' 
+      : 'assets/icons/alert_default_light.svg';
 }
