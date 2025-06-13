@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/card_write_model.dart';
 import '../../../app/data/repositories/card_write_repository.dart';
+import '../../main/viewmodels/pay_page_viewmodel.dart';
 
 class CardWritePageViewModel extends GetxController {
   final CardWriteRepository _repository = Get.find<CardWriteRepository>();
@@ -40,20 +41,15 @@ class CardWritePageViewModel extends GetxController {
   }
 
   void _validateForm() {
-    // 카드 번호: 16자리 숫자 (하이픈 제거 후)
     final cardNumberClean = cardNumberController.text.replaceAll(RegExp(r'[^0-9]'), '');
     final isCardNumberValid = cardNumberClean.length == 16;
     
-    // 유효기간: 4자리 숫자 (MMYY)
-    final isExpirationValid = expirationController.text.length == 4;
+    final isExpirationValid = expirationController.text.length == 5;
     
-    // CVC: 3자리 숫자
     final isCvcValid = cvcController.text.length == 3;
     
-    // 카드 비밀번호: 2자리 숫자
     final isPasswordValid = passwordController.text.length == 2;
     
-    // 생년월일: 6자리 숫자 (YYMMDD)
     final isBirthDateValid = birthDateController.text.length == 6;
     
     _isFormValid.value = isCardNumberValid &&
@@ -87,25 +83,26 @@ class CardWritePageViewModel extends GetxController {
 
       final card = CardWriteModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        cardNumber: cardNumberController.text,
-        expiration: expirationController.text,
+        cardNumber: cardNumberController.text.replaceAll(' ', '').replaceAll('-', ''),
+        expiryYear: expirationController.text.substring(3, 5),
+        expiryMonth: expirationController.text.substring(0, 2),
         cvc: cvcController.text,
-        password: passwordController.text,
-        birthDate: birthDateController.text,
+        cardPassword: passwordController.text,
+        identityNumber: birthDateController.text,
         createdAt: DateTime.now(),
       );
-
-      final isValid = await _repository.validateCard(card);
-      if (!isValid) {
-        Get.snackbar('오류', '카드 정보를 확인해주세요.');
-        return;
-      }
 
       final success = await _repository.saveCard(card);
 
       if (success) {
         Get.back();
         Get.snackbar('완료', '카드가 등록되었습니다.');
+        
+        try {
+          final payPageController = Get.find<PayPageViewModel>();
+          await payPageController.refreshCards();
+        } catch (_) {
+        }
       } else {
         Get.snackbar('오류', '카드 등록에 실패했습니다.');
       }
@@ -114,18 +111,6 @@ class CardWritePageViewModel extends GetxController {
     } finally {
       _isSubmitting.value = false;
     }
-  }
-
-  String formatCardNumber(String value) {
-    value = value.replaceAll(' ', '');
-    String formatted = '';
-    for (int i = 0; i < value.length; i++) {
-      if (i > 0 && i % 4 == 0) {
-        formatted += ' ';
-      }
-      formatted += value[i];
-    }
-    return formatted;
   }
 
   void goBack() {
