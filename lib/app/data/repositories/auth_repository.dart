@@ -1,18 +1,18 @@
-import 'dart:convert';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:mirim_pay/util/constants/app_constants.dart';
 import 'package:mirim_pay/util/service/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 abstract class AuthRepository {
-  Future<void> login();
+  Future<bool> login();
   Future<void> logout();
   bool get isLoggedIn;
 }
 
 class AuthRepositoryImpl implements AuthRepository {
   @override
-  Future<void> login() async {
+  Future<bool> login() async {
     await auth.logIn();
     if (auth.currentUser == null) {
       throw Exception("Login failed");
@@ -22,26 +22,15 @@ class AuthRepositoryImpl implements AuthRepository {
       final baseUrl = dotenv.env['BASE_URL'];
       
       final response = await http.get(
-        Uri.parse('$baseUrl/users/${auth.currentUser?.id}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        Uri.parse('$baseUrl/users/exist/${auth.currentUser?.id}'),
+        headers: await AppConstants.getHeaders(),
       );
       
       if (response.statusCode == 404) {
-        await http.post(
-          Uri.parse('$baseUrl/users/'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'id': int.parse(auth.currentUser?.id ?? '0'),
-            'nickname': '${auth.currentUser?.nickname}',
-          }),
-        );
-      } else {
-        throw Exception('Failed to load user: ${response.statusCode}');
+        return false;
       }
+      
+      return true;
     } catch (e) {
       throw Exception('Failed to connect to server: $e');
     }
