@@ -15,9 +15,11 @@ class FaceCameraViewModel extends GetxController {
   final RxBool isCameraInitialized = false.obs;
   final RxBool isProcessing = false.obs;
   final RxBool isCapturing = false.obs;
+  final RxBool isLoading = false.obs;
   final RxBool showInstructions = true.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxString loadingMessage = '얼굴을 등록하고 있습니다...'.obs;
   
   late FaceDetector faceDetector;
   
@@ -155,23 +157,45 @@ class FaceCameraViewModel extends GetxController {
     isCapturing.value = true;
     
     try {
+      // 카메라 이미지 스트림 정지
+      await cameraController!.stopImageStream();
+      
+      // 플래시 끄기
       await cameraController!.setFlashMode(FlashMode.off);
+      
+      // 사진 촬영
+      loadingMessage.value = '사진을 촬영하고 있습니다...';
+      isLoading.value = true;
       
       final image = await cameraController!.takePicture();
       final bytes = await File(image.path).readAsBytes();
       final base64Image = base64Encode(bytes);
       
+      // 얼굴 등록 처리
+      loadingMessage.value = '얼굴을 등록하고 있습니다...';
+      
+      // 로딩 효과를 위한 최소 지연시간
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
       final success = await _repository.registerFaceBase64(base64Image);
       
       if (success) {
+        loadingMessage.value = '등록이 완료되었습니다!';
+        await Future.delayed(const Duration(milliseconds: 800));
         Get.offNamed(AppRoutes.faceRegistrationSuccess);
       } else {
+        isLoading.value = false;
         Get.snackbar('오류', '얼굴 등록에 실패했습니다.');
+        // 이미지 스트림 재시작
+        await cameraController!.startImageStream(_processCameraImage);
       }
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar('오류', '사진 촬영에 실패했습니다.');
+      // 이미지 스트림 재시작
+      await cameraController!.startImageStream(_processCameraImage);
     } finally {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       isCapturing.value = false;
     }
   }

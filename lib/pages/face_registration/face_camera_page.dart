@@ -101,8 +101,10 @@ class FaceCameraPage extends GetView<FaceCameraViewModel> {
             children: [
               _buildCameraPreview(),
               _buildOverlay(context, colors),
-              if (controller.showInstructions.value)
+              if (controller.showInstructions.value && !controller.isLoading.value)
                 _buildInstructions(context, colors),
+              if (controller.isLoading.value)
+                _buildLoadingOverlay(context, colors),
             ],
           );
         }),
@@ -146,6 +148,43 @@ class FaceCameraPage extends GetView<FaceCameraViewModel> {
           textAlign: TextAlign.center,
         ),
       )
+    );
+  }
+
+  Widget _buildLoadingOverlay(BuildContext context, ThemeColors colors) {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.8),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color: colors.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    Obx(() => Text(
+                      controller.loadingMessage.value,
+                      style: Typo.bodyMd(context, color: colors.gray900),
+                      textAlign: TextAlign.center,
+                    )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
