@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mirim_pay/util/service/auth_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
@@ -113,10 +114,22 @@ class QrPaymentDialog extends StatelessWidget {
               style: Typo.headlineLg(context, color: colors.gray800),
             ),
             const SizedBox(height: 22),
-            QrImageView(
-              data: '{"billingKey" : "${card.billingKey}", "customerKey" : "${card.customerKey}"}',
-              version: QrVersions.auto,
-              backgroundColor: colors.gray900,
+            FutureBuilder<String>(
+              future: auth.getAccessToken(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading QR code'));
+                }
+                return QrImageView(
+                  data: '{"billingKey" : "${card.billingKey}", "customerKey" : "${card.customerKey}", "accessKey" : "${snapshot.data}"}',
+                  version: QrVersions.auto,
+                  backgroundColor: colors.gray50,
+                  foregroundColor: colors.gray900,
+                );
+              },
             ),
           ],
         ),

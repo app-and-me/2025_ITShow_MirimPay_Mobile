@@ -19,6 +19,7 @@ dependencies:
   camera: ^0.11.0+2
   google_mlkit_face_detection: ^0.13.1
   permission_handler: ^12.0.0+1
+  rename: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +32,22 @@ flutter:
     - assets/icons/
     - assets/config/.env
     - assets/images/
+    - assets/images/비쵸비 5개입.png
+    - assets/images/구운감자.png
+    - assets/images/치킨팝 닭강정맛.png
+    - assets/images/포도 알맹이.png
+    - assets/images/국민.png
+    - assets/images/기업.png
+    - assets/images/농협.png
+    - assets/images/롯데.png
+    - assets/images/삼성.png
+    - assets/images/신한.png
+    - assets/images/우리.png
+    - assets/images/카카오.png
+    - assets/images/토스.png
+    - assets/images/하나.png
+    - assets/images/현대.png
+    - assets/images/BC.png
   fonts:
     - family: Pretendard
       fonts:

@@ -33,13 +33,19 @@ class CardInfoItem extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 74,
-                    height: 117,
-                    decoration: BoxDecoration(
-                      color: colors.gray300,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          'assets/images/${card.cardNickname.replaceAll(" 카드", "")}.png',
+                          width: 74,
+                          height: 117,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(width: 16),
                   Expanded(
