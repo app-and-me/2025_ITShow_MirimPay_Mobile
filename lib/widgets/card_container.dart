@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mirim_pay/app/data/models/card_model.dart' as card_model;
 import 'package:mirim_pay/util/style/colors.dart';
 import 'package:mirim_pay/util/style/typography.dart';
@@ -14,7 +15,7 @@ class CardContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = ThemeColors.of(context);
-    
+
     return Container(
       width: 219,
       height: 348,
@@ -24,21 +25,26 @@ class CardContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              card.cardNickname,
-              style: Typo.bodyMd(context, color: colors.gray700),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(
+              'assets/images/${card.cardNickname.replaceAll(" 카드", "")}.png',
+              width: 219,
+              height: 348,
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${card.id}',
-              style: Typo.bodySm(context, color: colors.gray500),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Text(
+              card.cardNumber,
+              style: Typo.bodyMd(context, color: colors.gray900),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

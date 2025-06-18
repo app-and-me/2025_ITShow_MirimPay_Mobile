@@ -31,16 +31,18 @@ class PaymentHistoryItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              children: [
+                children: [
                 Text(
                   formatDate(payment.createdAt),
                   style: Typo.bodySm(context, color: colors.gray600),
                 ),
                 const SizedBox(width: 36),
                 Text(
-                  payment.orderName,
+                  payment.orderName.length > 13
+                    ? '${payment.orderName.substring(0, 13)}...'
+                    : payment.orderName,
                   style: Typo.bodyMd(context, color: colors.gray800)
-                      .copyWith(fontWeight: FontWeight.w400),
+                    .copyWith(fontWeight: FontWeight.w400),
                 ),
               ],
             ),
