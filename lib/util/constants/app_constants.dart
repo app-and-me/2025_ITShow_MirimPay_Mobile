@@ -28,7 +28,6 @@ class AppConstants {
   static const double dividerThickness = 2.0;
   static Future<Map<String, String>> getHeaders() async {
     String token = await auth.getAccessToken();
-    print(token);
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
